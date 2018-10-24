@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <title>Users</title>
+    <style>
+        h1 {
+            vertical-align: top;
+        }
+        .header{
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px 0 0px 20px;
+
+        }
+        .new_job{
+            display: inline-block;
+            margin-left: 10px;
+        }
+        .stats{
+            margin-left: 10px;
+        }
+        #introduction{
+            margin-right: 30px;
+        }
+        #grant_table{
+            margin-top: 40px;
+        }
+        #job_table{
+            margin-top: 30px;
+        }
+        .actions{
+            display: inline-block;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm bg-light">
+        <h4 id="introduction" class='header'>Hello {{ user.first_name }}</h4>
+        <form method='post' action="/logout">
+            {% csrf_token %}
+            <button type="submit" value='submit' id="logout" class="btn btn-danger">Logout</button>
+        </form>
+        <a class="new_job" href="/new">New job!</a>
+    </nav>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li {% if message.tags %} class="{{message.tags}}" {% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <div id='job_table'>
+        <table class="table">
+            <thead>
+                <p>Everyone's jobs:</p>
+                <tr>
+                    <th scope="col">Title</th>
+                    <th scope="col">Location</th>
+                    <th scope='col'>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                {% if job.taken is False %}
+                <tr>
+                    <th scope="row">{{ job.title }}</th>
+                    <td>{{ job.location }}</td>
+                    <td>
+                        <a class='actions' href="/show/{{job.id}}">View</a>
+                        <form class='actions' action="/add" method='POST'>
+                            {% csrf_token %}
+                            <input type="hidden" name='user_id' value="{{ user.id}}">
+                            <input type="hidden" name='job_title' value="{{ job.title }}">
+                            <input type="hidden" name='job_id' value="{{ job.id }}">
+                            <button class="btn btn-success" type="submit">Add</button>
+                        </form>
+                        {% if job.poster.id == user.id %}
+                        <a class='actions' href="/edit/{{job.id}}">Edit</a>
+                        <form class='actions' action="/delete" method='POST'>
+                            {% csrf_token %}
+                            <input type="hidden" name='job_id' value="{{ job.id }}">
+                            <button class="btn btn-danger" type="submit">Remove</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id='grant_table'>
+        <table class="table">
+            <thead>
+                <p>{{ user.first_name }}'s jobs</p>
+                <tr>
+                    <th scope="col">Job</th>
+                    <th scope="col">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in user_jobs %}
+                {% if job.taken is True %}
+                <tr>
+                    <th scope="row">{{ job.title }}</th>
+                    <td>
+                        <a href="/show/{{job.id}}">View</a>
+                        <form class='actions' action="/give_up" method='POST'>
+                        {% csrf_token %}
+                        <input type="hidden" name='user_id' value="{{ user.id }}">
+                        <input type="hidden" name='job_id' value="{{ job.id }}">
+                        <button class="btn btn-success" type="submit">Give up job</button>
+                    </form>
+                    <form class='actions' action="/delete" method='POST'>
+                        {% csrf_token %}
+                        <input type="hidden" name='job_id' value="{{ job.id }}">
+                        <button class="btn btn-danger" type="submit">Job completed</button>
+                    </form></td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

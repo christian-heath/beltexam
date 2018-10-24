@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <title>New Wish</title>
+    <style>
+        .big_form{
+                margin: 25px;
+                padding: 15px;
+                border-style: solid;
+                border-width: 5px;
+                border-radius: 8px;
+                width: 483px;
+            }
+        .messages{
+                color: red;
+        }    
+        .new_user {
+            vertical-align: top;
+            display: inline-block;
+            vertical-align: top;
+            margin: 10px 0 0px 30px;
+            text-decoration: underline;
+        }
+        .go_back{
+            margin-left: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2 class='new_user'>Hello {{ user.first_name }}! Post a job!</h2>
+    <form class='big_form' action="/new_job" method='POST'>
+        {% csrf_token %}
+        <div class="form-group">
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <label for="exampleFormControlInput1">Title:</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" name='title'>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Description:</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" name='desc'>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Location:</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" name='location'>
+        </div>
+        <p>Select one or more categories.</p>
+        <div class="form-group">
+            <input class="form-group-input" value='Pet_care' id='pet care' type="checkbox" name='category'>
+            <label class="form-group-label" for="defaultCheck1">Pet Care</label>
+        </div>
+        <div class="form-group">
+            <input class="form-group-input" value='Garden' id='garden' type="checkbox" name='category'>
+            <label class="form-group-label" for="defaultCheck1">Garden</label>
+        </div>
+        <div class="form-group">
+            <input class="form-group-input" value='Electrical' id='electrical' type="checkbox" name='category'>
+            <label class="form-group-label" for="defaultCheck1">Electrical</label>
+        </div>
+        <div class="form-group">
+            <label for="exampleFormControlInput1">Other:</label>
+            <input type="text" class="form-control" id="input" name='category'>
+        </div>
+        <input type="hidden" name='user_id' value="{{ user.id }}">
+        <button type="submit" value='submit' class="btn btn-success">Submit</button>
+        <a class='go_back' href="/">Cancel</a>
+    </form>
+</body>
+
+</html>

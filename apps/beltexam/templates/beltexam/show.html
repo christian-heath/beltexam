@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous">
+    <title>Job details</title>
+    <style>
+        h1 {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h3{
+            display: block;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        #back{
+            padding: 8px;
+            background-color: blue;
+            border-radius: 5px;
+            color: white;
+        }
+        h6{
+            display: block;
+            text-align: center;
+        }
+        .list{
+            list-style: none;
+            display: block;
+            text-align: center;
+        }
+        .forms{
+            display: inline-block;
+            margin-left: 200px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class='header'>
+        <h1>Hello {{ user.first_name }}! These are the job details!</h1>
+    </div>
+    <h3>{{ job.title }}</h3>
+    <div>
+        <ul class="list">
+            <li>Description: {{ job.desc }}</li>
+            <li>Location: {{ job.location }}</li>
+            <li>Posted by: {{ job.poster.first_name }}</li>
+            <li>Posted on: {{ job.created_at }}</li>
+            <li>Category: {{ job.categories }}</li>
+        </ul>    
+    </div>
+        <h6><a id="back" href="/dashboard">Go to dashboard</a></h6>
+        <form class= 'forms' action="/add" method='POST'>
+            {% csrf_token %}
+            <input type="hidden" name='user_id' value="{{ user.id }}">
+            <input type="hidden" name='job_id' value="{{ job.id }}">
+            <button class="btn btn-success" type="submit">Add to my jobs</button>
+        </form>
+        {% if job.taken is True and job.taker.id == user.id %}
+        <form class='forms' action="/give_up" method='POST'>
+            {% csrf_token %}
+            <input type="hidden" name='user_id' value="{{ user.id }}">
+            <input type="hidden" name='job_id' value="{{ job.id }}">
+            <button class="btn btn-danger" type="submit">Give up job</button>
+        </form>
+        {% endif %}
+</body>
+</html>
