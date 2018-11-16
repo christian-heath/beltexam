@@ -85,6 +85,7 @@ def login(request):
         return redirect('/')
 
 def logout(request):
+    
     if request.method == 'POST':
         request.session.clear()
         return redirect('/')
@@ -92,6 +93,8 @@ def logout(request):
         return redirect('/')
 
 def new_job(request):
+    if 'authenticator' not in request.session:
+        return render(request, 'beltexam/hacker.html')
     if request.method == 'POST':
         errors = Job.objects.job_validator(request.POST)
         if len(errors):
@@ -105,6 +108,8 @@ def new_job(request):
         return redirect('/')
 
 def add(request):
+    if 'authenticator' not in request.session:
+        return render(request, 'beltexam/hacker.html')
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.taker = User.objects.get(id=request.POST['user_id'])
@@ -115,6 +120,8 @@ def add(request):
         return redirect('/')
 
 def update(request, id):
+    if 'authenticator' not in request.session:
+        return render(request, 'beltexam/hacker.html')
     if request.method == 'POST':
         if request.POST['poster_id'] != request.POST['user_id']:
             messages.error(request, "You do not have permission to edit this job. Users may only edit jobs if they are the original poster.")
@@ -135,6 +142,8 @@ def update(request, id):
         return redirect('/')
 
 def give_up(request):
+    if 'authenticator' not in request.session:
+        return render(request, 'beltexam/hacker.html')
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.taken = False
@@ -144,6 +153,8 @@ def give_up(request):
         return redirect('/')
 
 def delete(request):
+    if 'authenticator' not in request.session:
+        return render(request, 'beltexam/hacker.html')
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.delete()
