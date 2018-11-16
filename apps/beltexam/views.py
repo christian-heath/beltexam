@@ -85,6 +85,7 @@ def login(request):
         return redirect('/')
 
 def logout(request):
+    
     if request.method == 'POST':
         request.session.clear()
         return redirect('/')
@@ -92,6 +93,8 @@ def logout(request):
         return redirect('/')
 
 def new_job(request):
+    if 'user_id' not in request.session:
+        return redirect('/')
     if request.method == 'POST':
         errors = Job.objects.job_validator(request.POST)
         if len(errors):
@@ -105,6 +108,8 @@ def new_job(request):
         return redirect('/')
 
 def add(request):
+    if 'user_id' not in request.session:
+        return redirect('/')
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.taker = User.objects.get(id=request.POST['user_id'])
@@ -115,6 +120,8 @@ def add(request):
         return redirect('/')
 
 def update(request, id):
+    if 'user_id' not in request.session:
+        return redirect('/')
     if request.method == 'POST':
         if request.POST['poster_id'] != request.POST['user_id']:
             messages.error(request, "You do not have permission to edit this job. Users may only edit jobs if they are the original poster.")
@@ -135,6 +142,8 @@ def update(request, id):
         return redirect('/')
 
 def give_up(request):
+    if 'user_id' not in request.session:
+        return redirect('/')
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.taken = False
@@ -144,6 +153,8 @@ def give_up(request):
         return redirect('/')
 
 def delete(request):
+   if 'user_id' not in request.session:
+        return redirect('/') 
     if request.method == 'POST':
         job = Job.objects.get(id=request.POST['job_id'])
         job.delete()
